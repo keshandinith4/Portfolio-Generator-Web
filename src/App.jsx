@@ -4,7 +4,7 @@ import './index.css';
 
 function App() {
   return (
-    <div className="min-h-screen w-full flex flex-col bg-[#F9EBD3] text-gray-900 overflow-x-hidden font-sans">
+    <div>
       {/* Router setup */}
       <BrowserRouter>
         <Routes>
