@@ -67,7 +67,7 @@ export default function HeroSection() {
             Build Your
             <br />
             Developer{" "}
-            <span className="text-indigo-500">Portfolio</span>
+            <span className="text-indigo-500 bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Portfolio</span>
             <br />
             in Minutes
           </h1>
@@ -116,45 +116,6 @@ export default function HeroSection() {
               alt="Portfolio builder preview"
               className="w-full h-full object-cover"
             />
-          </div>
-
-          {/* Floating badge — Portfolio Created */}
-          <div
-            className="absolute top-6 left-2 lg:-left-6 flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-xl border border-gray-100"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateX(0)" : "translateX(-16px)",
-              transition: "opacity 0.6s ease 0.45s, transform 0.6s ease 0.45s",
-            }}
-          >
-            <div 
-              className="flex-shrink-0 w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
-                <Check size={14} className="text-green-600" strokeWidth={3} />
-            </div>
-            <div>
-              <p 
-                className="text-xs font-bold text-gray-800 leading-tight">Portfolio Created!</p>
-              <p className="text-xs text-gray-400 leading-tight">Your site is ready</p>
-            </div>
-          </div>
-
-          {/* Floating badge — Shareable Link */}
-          <div
-            className="absolute bottom-6 right-2 lg:-right-6 flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-xl border border-gray-100"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateX(0)" : "translateX(16px)",
-              transition: "opacity 0.6s ease 0.6s, transform 0.6s ease 0.6s",
-            }}
-          >
-            <div 
-              className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
-                <Link2 size={13} className="text-indigo-500" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-gray-800 leading-tight">Shareable Link</p>
-              <p className="text-xs text-indigo-500 leading-tight">yoursite.com/portfolio</p>
-            </div>
           </div>
         </div>
       </div>
