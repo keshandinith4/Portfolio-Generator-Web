@@ -14,7 +14,7 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse at 100% 50%, #e8e6f8 0%, #f3f2fc 40%, #ffffff 70%), radial-gradient(ellipse at 0% 90%, #d4f5e2 0%, transparent 50%)",
+          "radial-gradient(ellipse at 100% 50%, #e8e6f8 0%, #f3f2fc 40%), radial-gradient(ellipse at 0% 90%, #d4f5e2 0%, transparent 50%)",
       }}
     >
       {/* Background blobs */}
@@ -39,7 +39,7 @@ export default function HeroSection() {
       <div 
         className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 pt-28 pb-32 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
-        {/* ── LEFT ── */}
+        {/* LEFT */}
         <div
           className="flex-1 flex flex-col gap-6 max-w-xl"
           style={{
@@ -90,14 +90,14 @@ export default function HeroSection() {
               </button>
 
               <button 
-                className="flex items-center gap-2 border-2 border-gray-300 hover:border-indigo-400 text-gray-700 hover:text-indigo-600 font-semibold px-6 py-3 rounded-xl transition-all duration-200 bg-white/60 backdrop-blur-sm">
+                className="flex items-center gap-2 border-2 border-gray-300 hover:border-indigo-500 text-gray-700 hover:text-indigo-600 font-semibold px-6 py-3 rounded-xl transition-all duration-200 bg-white/60 backdrop-blur-sm">
                 <Eye size={16} />
                   View Examples
               </button>
           </div>
         </div>
 
-        {/* ── RIGHT — Mockup ── */}
+        {/* RIGHT Mockup */}
         <div
           className="flex-1 relative flex justify-center lg:justify-end"
           style={{
@@ -119,22 +119,21 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-
-      {/* ── Wave Curve ── */}
-      <div 
-        className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg
-            viewBox="0 0 1440 80"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            className="w-full h-16 sm:h-20"
-          >
-            <path
-              d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z"
-              fill="#ffffff"
-            />
-          </svg>
+      
+      {/* S-Curve Divider */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+        <svg
+          viewBox="0 0 1440 120"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          className="relative block w-full h-[80px] lg:h-[120px]"
+        >
+          <path
+            d="M0,80 C360,-80 1080,250 1440,80 L1440,160 L0,160 Z"
+            fill="#f8fafc" 
+          />
+        </svg>
       </div>
-    </section>
+  </section>
   );
 }
