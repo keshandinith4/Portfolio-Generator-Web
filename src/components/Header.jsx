@@ -6,9 +6,7 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState("");
 
   const sections = [
-    { label: "Browse Portfolios", href: "#browse" },
-    { label: "About", href: "#about" },
-    { label: "Documentation", href: "#documentation" },
+    { label: "About Us", href: "#about" },
   ];
 
   useEffect(() => {
@@ -37,7 +35,7 @@ export default function Header() {
       {/* Logo Section */}
       <div className="flex items-center">
         <span className="font-bold text-3xl md:text-4xl text-[#2D3748] tracking-tight">
-          Portfolio <span className="text-[#4A90E2]">Generator</span>
+          Portfolio <span className="text-indigo-600">Generator</span>
         </span>
       </div>
 
@@ -60,7 +58,7 @@ export default function Header() {
         {/* Action Button */}
         <a
           href="#build"
-          className="bg-[#6366F1] hover:bg-[#5558E3] text-white font-bold text-[15px] px-7 py-3 rounded-lg transition duration-200 shadow-md"
+          className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-[15px] px-7 py-3 rounded-lg transition duration-200 shadow-md"
         >
           Build My Portfolio
         </a>
