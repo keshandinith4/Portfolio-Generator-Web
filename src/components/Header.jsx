@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const navigate = useNavigate();
 
   const sections = [
-    { label: "About Us", href: "#about" },
+    { label: "About Us", href: "#About_Us" },
   ];
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function Header() {
         <a
           href="#build"
           className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-[15px] px-7 py-3 rounded-lg transition duration-200 shadow-md"
+          onClick={() => navigate('/create')}
         >
           Build My Portfolio
         </a>

@@ -54,7 +54,9 @@ export default function About_Us() {
   ];
 
   return (
-    <section className="py-20 px-6 bg-slate-50 min-h-screen">
+    <section 
+        id="About_Us"
+        className="py-20 px-6 bg-slate-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
         
         {/* Header Section */}
