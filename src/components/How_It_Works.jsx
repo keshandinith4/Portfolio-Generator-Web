@@ -1,7 +1,9 @@
 import React from 'react'
 import { Rocket } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 export default function How_It_Works() {
+    const navigate = useNavigate();
     const steps = [
     {
       number: "1",
@@ -54,9 +56,11 @@ export default function How_It_Works() {
 
       {/* CTA Button */}
       <div className="mt-16">
-        <button className="bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-2 text-white font-medium py-4 px-8 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center mx-auto gap-2">
-          <Rocket size={20} fill="white" />
-          Get Started Now
+        <button 
+            onClick={() => navigate('/create')}
+            className="bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-2 text-white font-medium py-4 px-8 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center mx-auto gap-2">
+            <Rocket size={20} fill="white" />
+            Get Started Now
         </button>
       </div>
     </section>
