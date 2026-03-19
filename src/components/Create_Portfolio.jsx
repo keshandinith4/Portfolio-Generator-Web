@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { 
   User, Mail, Code, Briefcase, 
   Plus, Send, ChevronLeft, Rocket 
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Create_Portfolio({ setPortfolioData }) {
   const navigate = useNavigate();
 
+  // States
   const [hasPortfolio, setHasPortfolio] = useState(false); 
   const [isEditing, setIsEditing] = useState(false);
   const [step, setStep] = useState(1);
@@ -25,6 +27,15 @@ export default function Create_Portfolio({ setPortfolioData }) {
 
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.portfolioData) {
+      setFormData(user.portfolioData);
+      setHasPortfolio(true);
+    }
+  }, []);
+
+  // Form Validation
   const validateStep = () => {
     let newErrors = {};
     if (step === 1) {
@@ -60,22 +71,47 @@ export default function Create_Portfolio({ setPortfolioData }) {
   const handlePublish = async () => {
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (setPortfolioData) {
-        setPortfolioData(formData);
+    try {
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const token = user?.token;
+
+      if (!token) {
+        alert("කරුණාකර ප්‍රථමයෙන් Login වන්න!");
+        navigate('/login');
+        return;
       }
 
-      alert("Portfolio Published Successfully!");
-      setHasPortfolio(true); 
-      setIsEditing(false); 
-      
-      navigate('/view'); 
-    }, 1500);
+      const response = await axios.put(
+        'http://localhost:5000/api/portfolio/update', 
+        formData, 
+        {
+          headers: { token: `Bearer ${token}` }
+        }
+      );
+
+      if (response.status === 200) {
+        setIsLoading(false);
+        
+        if (setPortfolioData) setPortfolioData(formData);
+
+        const updatedUser = { ...user, portfolioData: formData };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        alert("Portfolio Published Successfully!");
+        setHasPortfolio(true); 
+        setIsEditing(false); 
+        navigate('/view'); 
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.error(err);
+      alert(err.response?.data?.message || "Publish කිරීමේදී දෝෂයක් ඇති විය.");
+    }
   };
 
-  // 1. Landing View
+
+  // Landing View
   if (!isEditing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
@@ -96,6 +132,7 @@ export default function Create_Portfolio({ setPortfolioData }) {
     );
   }
 
+  // Multi-step Editor View
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 relative">
       <button onClick={() => setIsEditing(false)} className="absolute top-6 left-10 text-gray-500 hover:text-indigo-600 flex items-center gap-1 font-bold">
