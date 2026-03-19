@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   User, Mail, Code, Briefcase, 
-  Plus, Trash2, Send, ChevronRight, ChevronLeft, Rocket 
+  Plus, Send, ChevronLeft, Rocket 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Create_Portfolio() {
+export default function Create_Portfolio({ setPortfolioData }) {
+  const navigate = useNavigate();
+
   const [hasPortfolio, setHasPortfolio] = useState(false); 
   const [isEditing, setIsEditing] = useState(false);
   const [step, setStep] = useState(1);
@@ -15,11 +18,9 @@ export default function Create_Portfolio() {
     fullName: '',
     title: '',
     bio: '',
-    profileImage: '',
-    contact: { email: '', linkedin: '', github: '', website: '' },
+    contact: { email: '', linkedin: '', github: '' },
     skills: ['React', 'JavaScript'],
-    projects: [{ name: '', description: '', techStack: '', githubLink: '', liveDemo: '' }],
-    experience: [{ company: '', role: '', duration: '', description: '' }]
+    projects: [{ name: '', description: '', techStack: '' }]
   });
 
   const [errors, setErrors] = useState({});
@@ -49,274 +50,159 @@ export default function Create_Portfolio() {
     }
   };
 
-  const addListItem = (listName, template) => {
-    setFormData(prev => ({ ...prev, [listName]: [...prev[listName], template] }));
-  };
-
-  const removeListItem = (index, listName) => {
-    setFormData(prev => ({ ...prev, [listName]: prev[listName].filter((_, i) => i !== index) }));
+  const addProject = () => {
+    setFormData(prev => ({
+      ...prev,
+      projects: [...prev.projects, { name: '', description: '', techStack: '' }]
+    }));
   };
 
   const handlePublish = async () => {
     setIsLoading(true);
+    
     setTimeout(() => {
       setIsLoading(false);
-      console.log("Final Submission:", formData);
-      alert(hasPortfolio ? " Portfolio Updated Successfully!" : " Portfolio Created Successfully!");
-      setHasPortfolio(true);
+      
+      if (setPortfolioData) {
+        setPortfolioData(formData);
+      }
+
+      alert("Portfolio Published Successfully!");
+      setHasPortfolio(true); 
       setIsEditing(false); 
-      setStep(1); 
-    }, 2000);
+      
+      navigate('/view'); 
+    }, 1500);
   };
 
- 
+  // 1. Landing View
   if (!isEditing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-        <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 text-center transition-all">
-          <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ${hasPortfolio ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+        <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-2xl text-center border border-gray-100">
+          <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${hasPortfolio ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-600'}`}>
             {hasPortfolio ? <Briefcase size={48} /> : <Rocket size={48} />}
           </div>
-          
-          <h2 className="text-3xl font-bold text-gray-800 mb-3">
-            {hasPortfolio ? "Welcome Back!" : "Showcase Your Talent"}
-          </h2>
-          
-          <p className="text-gray-500 mb-10 leading-relaxed">
-            {hasPortfolio 
-              ? "Your professional portfolio is currently live. Do you want to update your latest projects and skills?" 
-              : "Create a stunning professional portfolio in minutes and share it with the world."}
-          </p>
-          
+          <h2 className="text-3xl font-bold mb-3">{hasPortfolio ? "Welcome Back!" : "Get Started"}</h2>
+          <p className="text-gray-500 mb-8">Build your professional identity in minutes.</p>
           <button 
             onClick={() => setIsEditing(true)}
-            className={`w-full py-4 rounded-2xl font-bold text-white transition-all transform hover:-translate-y-1 shadow-lg active:scale-95 ${
-              hasPortfolio ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200' : 'bg-green-600 hover:bg-green-700 shadow-green-200'
-            }`}
+            className={`w-full py-4 rounded-2xl font-bold text-white shadow-lg transition-all ${hasPortfolio ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-green-600 hover:bg-green-700'}`}
           >
-            {hasPortfolio ? "Update Your Portfolio" : "Create Your Portfolio"}
+            {hasPortfolio ? "Update Portfolio" : "Create Portfolio"}
           </button>
-          
-          {hasPortfolio && (
-             <p className="mt-4 text-sm text-gray-400 font-medium cursor-pointer hover:text-indigo-500 transition-colors">
-                View Live Portfolio
-             </p>
-          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 font-sans relative">
-      {/* Back Button */}
-      <button 
-        onClick={() => setIsEditing(false)}
-        className="absolute top-6 left-10 text-gray-500 font-semibold hover:text-indigo-600 flex items-center gap-1 transition-colors"
-      >
-        <ChevronLeft size={18} /> Exit Editor
+    <div className="min-h-screen bg-gray-50 py-12 px-4 relative">
+      <button onClick={() => setIsEditing(false)} className="absolute top-6 left-10 text-gray-500 hover:text-indigo-600 flex items-center gap-1 font-bold">
+        <ChevronLeft size={18} /> Back
       </button>
 
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 mt-10">
-        
-        {/* Step Indicator / Progress Bar */}
+      <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border border-gray-100">
         <div className="flex bg-gray-100 h-2">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className={`flex-1 transition-all duration-700 ${step >= i ? 'bg-indigo-600' : 'bg-gray-200'}`} />
+            <div key={i} className={`flex-1 transition-all duration-500 ${step >= i ? 'bg-indigo-600' : 'bg-gray-200'}`} />
           ))}
         </div>
 
         <div className="p-10">
-          <div className="mb-10">
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-1">
-              {hasPortfolio ? "Update Portfolio" : "Create New Portfolio"}
-            </h1>
-            <div className="flex items-center gap-2">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full">STEP {step} OF 4</span>
-                <span className="text-gray-400 text-sm italic">— {step === 1 ? 'Personal Info' : step === 2 ? 'Skills & Social' : step === 3 ? 'Projects' : 'Finish'}</span>
-            </div>
+          <div className="mb-10 text-center md:text-left">
+            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Step {step}</h1>
+            <p className="text-gray-400 font-medium">Please fill in your professional details</p>
           </div>
 
-          {/* STEP 1: Personal Info */}
-          {step === 1 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center gap-2 text-gray-800 font-bold mb-2">
-                <User size={20} className="text-indigo-600" /> Basic Details
+          <div className="min-h-[300px]">
+            {step === 1 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 font-bold mb-4 text-gray-700"><User size={20} className="text-indigo-600" /> Basic Information</div>
+                <input 
+                  name="username" placeholder="Unique Username" value={formData.username} onChange={handleInputChange}
+                  className={`w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all ${errors.username ? 'border-red-500' : 'border-gray-200'}`}
+                />
+                {errors.username && <p className="text-red-500 text-xs ml-2">{errors.username}</p>}
+                
+                <input 
+                  name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange}
+                  className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <textarea 
+                  name="bio" placeholder="Short Professional Bio" value={formData.bio} onChange={handleInputChange}
+                  className="w-full p-4 border border-gray-200 rounded-2xl h-32 outline-none focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
-              <div className="grid grid-cols-1 gap-4">
-                  <div className="relative">
-                      <input 
-                        type="text" name="username" placeholder="Unique Username (URL)"
-                        value={formData.username} onChange={handleInputChange}
-                        disabled={hasPortfolio} 
-                        className={`w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all ${hasPortfolio ? 'bg-gray-50 cursor-not-allowed text-gray-400' : 'border-gray-200 focus:border-indigo-500'}`}
-                      />
-                      {hasPortfolio && <span className="absolute right-4 top-4 text-[10px] font-bold text-gray-400 uppercase">Locked</span>}
-                  </div>
-                  <input 
-                    type="text" name="fullName" placeholder="Full Name"
-                    value={formData.fullName} onChange={handleInputChange}
-                    className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  />
-                  <input 
-                    type="text" name="title" placeholder="Professional Title (e.g. Senior UI Designer)"
-                    value={formData.title} onChange={handleInputChange}
-                    className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  />
-                  <textarea 
-                    name="bio" placeholder="Write a short, catchy bio about yourself..."
-                    value={formData.bio} onChange={handleInputChange}
-                    className="w-full p-4 border border-gray-200 rounded-2xl h-32 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  />
-              </div>
-            </div>
-          )}
+            )}
 
-          {/* STEP 2: Contact & Skills */}
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-               <div className="flex items-center gap-2 text-gray-800 font-bold mb-2">
-                 <Mail size={20} className="text-indigo-600" /> Social Presence
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['email', 'linkedin', 'github', 'website'].map((f) => (
+            {step === 2 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 font-bold mb-4 text-gray-700"><Mail size={20} className="text-indigo-600" /> Contact Details</div>
+                {['email', 'linkedin', 'github'].map((field) => (
                   <input 
-                    key={f} 
-                    type="text"
-                    placeholder={f.charAt(0).toUpperCase() + f.slice(1)} 
-                    name={f} 
-                    value={formData.contact[f]} 
-                    onChange={(e) => handleInputChange(e, 'contact')} 
-                    className="p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all" 
-                   />
-                 ))}
-               </div>
+                    key={field} name={field} placeholder={field.toUpperCase()}
+                    value={formData.contact[field]} onChange={(e) => handleInputChange(e, 'contact')}
+                    className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                ))}
+              </div>
+            )}
 
-               <div className="pt-6 border-t border-gray-100">
-                  <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">Core Skills</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {formData.skills.map((skill, index) => (
-                      <div key={index} className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100 group">
-                        <input 
-                          value={skill} 
-                          onChange={(e) => {
-                            const newSkills = [...formData.skills];
-                            newSkills[index] = e.target.value;
-                            setFormData({...formData, skills: newSkills});
-                          }}
-                          className="bg-transparent outline-none text-indigo-700 text-sm font-bold w-24"
-                        />
-                        <button onClick={() => removeListItem(index, 'skills')}>
-                            <Trash2 size={14} className="text-indigo-300 hover:text-red-500 transition-colors" />
-                        </button>
-                      </div>
-                    ))}
-                    <button 
-                        type="button" 
-                        onClick={() => addListItem('skills', '')} 
-                        className="px-4 py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-sm font-bold hover:border-indigo-300 hover:text-indigo-500 transition-all"
-                    >
-                        + Add Skill
-                    </button>
-                  </div>
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 font-bold text-gray-700"><Code size={20} className="text-indigo-600" /> Featured Projects</div>
+                  <button onClick={addProject} className="p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"><Plus size={20}/></button>
                 </div>
-            </div>
-          )}
-
-          {/* STEP 3: Projects */}
-          {step === 3 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-800 font-bold"><Code size={20} className="text-indigo-600"/> Featured Projects</div>
-                <button 
-                    type="button" 
-                    onClick={() => addListItem('projects', { name: '', description: '', techStack: '', githubLink: '', liveDemo: '' })} 
-                    className="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-90"
-                >
-                    <Plus size={20}/>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="max-h-[400px] overflow-y-auto pr-2 space-y-4">
                   {formData.projects.map((p, i) => (
-                    <div key={i} className="p-6 bg-gray-50 border border-gray-100 rounded-3xl relative group transition-all hover:bg-white hover:shadow-xl hover:border-indigo-100">
-                       <button onClick={() => removeListItem(i, 'projects')} className="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
-                          <Trash2 size={20}/>
-                       </button>
-                       <input 
-                          placeholder="Project Title" 
-                          className="bg-transparent text-lg font-bold w-full mb-3 p-0 border-none outline-none focus:text-indigo-600" 
-                          value={p.name} 
-                          onChange={(e) => {
-                             const newP = [...formData.projects];
-                             newP[i] = { ...newP[i], name: e.target.value };
-                             setFormData({...formData, projects: newP});
-                          }} 
-                       />
-                       <textarea 
-                          placeholder="What did you build? (Description)" 
-                          className="w-full bg-transparent p-0 border-none outline-none text-gray-500 text-sm h-20 resize-none" 
-                          value={p.description} 
-                          onChange={(e) => {
-                             const newP = [...formData.projects];
-                             newP[i] = { ...newP[i], description: e.target.value };
-                             setFormData({...formData, projects: newP});
-                          }} 
-                       />
+                    <div key={i} className="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-3 shadow-sm">
+                      <input 
+                        placeholder="Project Name" className="w-full bg-transparent font-bold outline-none text-gray-800" 
+                        value={p.name} 
+                        onChange={(e) => {
+                          const newP = [...formData.projects];
+                          newP[i].name = e.target.value;
+                          setFormData({...formData, projects: newP});
+                        }}
+                      />
+                      <input 
+                        placeholder="Tech Stack (e.g. React, Node.js)" className="w-full bg-transparent text-sm outline-none text-indigo-600 font-semibold" 
+                        value={p.techStack} 
+                        onChange={(e) => {
+                          const newP = [...formData.projects];
+                          newP[i].techStack = e.target.value;
+                          setFormData({...formData, projects: newP});
+                        }}
+                      />
                     </div>
                   ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* STEP 4: Final Confirmation */}
-          {step === 4 && (
-            <div className="text-center py-10 animate-in zoom-in duration-500">
-              <div className={`w-24 h-24 ${hasPortfolio ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'} rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl animate-bounce`}>
-                {hasPortfolio ? <Briefcase size={45} /> : <Send size={45} />}
+            {step === 4 && (
+              <div className="text-center py-10">
+                <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Send size={40} />
+                </div>
+                <h2 className="text-2xl font-bold mb-2 text-gray-800">You're All Set!</h2>
+                <p className="text-gray-500 mb-8 max-w-sm mx-auto">Click the button below to publish your portfolio and see the live preview.</p>
+                <button 
+                  onClick={handlePublish} disabled={isLoading}
+                  className="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl active:scale-95"
+                >
+                  {isLoading ? "Publishing..." : "Confirm & Publish"}
+                </button>
               </div>
-              <h2 className="text-3xl font-black text-gray-900 mb-3">
-                {hasPortfolio ? "Save Your Changes" : "Ready to Go Live!"}
-              </h2>
-              <p className="text-gray-500 mb-10 max-w-xs mx-auto">
-                Double check everything. Once you hit the button below, your profile will be updated instantly.
-              </p>
-              
-              <button 
-                onClick={handlePublish} 
-                disabled={isLoading} 
-                className={`flex items-center justify-center gap-3 mx-auto px-14 py-5 rounded-2xl font-bold text-white shadow-2xl transition-all duration-300 transform ${isLoading ? 'bg-gray-400 cursor-not-allowed scale-95' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95 hover:shadow-indigo-300'}`}
-              >
-                {isLoading ? (
-                    <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Processing...
-                    </div>
-                ) : (
-                    <>{hasPortfolio ? "Update My Portfolio" : "Publish Portfolio Now"}</>
-                )}
-              </button>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Bottom Navigation Navigation */}
-          <div className="mt-16 flex justify-between items-center pt-8 border-t border-gray-100">
-            <button 
-                type="button" 
-                onClick={prevStep} 
-                className={`flex items-center gap-2 font-bold transition-all ${step === 1 ? 'opacity-0 pointer-events-none' : 'text-gray-400 hover:text-indigo-600'}`}
-            >
-              <ChevronLeft size={20}/> Previous
-            </button>
-
+          <div className="mt-12 flex justify-between pt-6 border-t border-gray-100">
+            <button onClick={prevStep} className={`font-bold text-gray-400 hover:text-gray-600 ${step === 1 ? 'invisible' : ''}`}>Previous</button>
             {step < 4 && (
-              <button 
-                type="button" 
-                onClick={nextStep} 
-                className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
-              >
-                Continue <ChevronRight size={20}/>
-              </button>
+              <button onClick={nextStep} className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-md active:scale-95">Next Step</button>
             )}
           </div>
         </div>
