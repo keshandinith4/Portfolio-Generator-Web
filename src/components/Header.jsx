@@ -61,7 +61,7 @@ export default function Header() {
         <a
           href="#build"
           className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-[15px] px-7 py-3 rounded-lg transition duration-200 shadow-md"
-          onClick={() => navigate('/create')}
+          onClick={() => navigate('/login')}
         >
           Build My Portfolio
         </a>

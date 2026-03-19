@@ -57,7 +57,7 @@ export default function How_It_Works() {
       {/* CTA Button */}
       <div className="mt-16">
         <button 
-            onClick={() => navigate('/create')}
+            onClick={() => navigate('/login')}
             className="bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-2 text-white font-medium py-4 px-8 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center mx-auto gap-2">
             <Rocket size={20} fill="white" />
             Get Started Now
