@@ -29,7 +29,7 @@ export default function Footer() {
             {/* Buttons */}
             <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
                 <button 
-                    onClick={() => navigate('/create')}
+                    onClick={() => navigate('/login')}
                     className="flex items-center gap-2 bg-white text-indigo-600 font-bold hover:bg-indigo-600 hover:text-white px-8 py-4 rounded-xl shadow-lg hover:bg-gray-50 transition-all active:scale-95 text-lg">
                     <SquarePen size={16} strokeWidth={3} />
                         Create Your Portfolio

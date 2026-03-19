@@ -86,7 +86,7 @@ export default function HeroSection() {
           <div 
             className="flex flex-wrap items-center gap-4 mt-2">
               <button 
-                onClick={() => navigate('/create')}
+                onClick={() => navigate('/login')}
                 className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200">
                 <SquarePen size={16} strokeWidth={3} />
                   Create Portfolio Free
