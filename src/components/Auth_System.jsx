@@ -94,21 +94,6 @@ export default function Auth_System() {
               </button>
             </form>
 
-            <div className="relative flex items-center py-1">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink mx-4 text-gray-400 text-xs uppercase font-bold tracking-widest">Or Continue With</span>
-              <div className="flex-grow border-t border-gray-200"></div>
-            </div>
-
-            <div className="flex gap-3">
-              <button className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-semibold text-gray-700">
-                <Chrome size={18} /> Google
-              </button>
-              <button className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-semibold text-gray-700">
-                <Github size={18} /> Github
-              </button>
-            </div>
-
             <p className="text-center text-sm text-gray-600">
               New user? <button onClick={() => setView('signup')} className="text-indigo-600 font-bold hover:underline">Create Account</button>
             </p>
