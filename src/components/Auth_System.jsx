@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Mail, Lock, User, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
+// get VITE_API_BASE_URL from .env file
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Auth_System() {
   const [view, setView] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +21,6 @@ export default function Auth_System() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-   
     setFormData({ ...formData, [name]: value });
   };
 
@@ -28,21 +30,26 @@ export default function Auth_System() {
 
     try {
       if (view === 'login') {
-        // LOGIN CALL
-        const res = await axios.post('http://localhost:5000/api/auth/login', {
+        // Login API Call
+        const res = await axios.post(`${API_URL}/auth/login`, {
           email: formData.email,
           password: formData.password
         });
         
-       
         localStorage.setItem('user', JSON.stringify(res.data));
         alert("Login Successful!");
         navigate('/create'); 
 
       } else if (view === 'signup') {
-        // SIGNUP CALL
-        await axios.post('http://localhost:5000/api/auth/register', formData);
-        alert("Registration Success! Please Login.");
+        // Register API Call
+        await axios.post(`${API_URL}/auth/register`, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password
+        });
+        
+        alert("Registration Success! Please Login. 🎉");
         setView('login');
       }
     } catch (err) {
@@ -52,7 +59,6 @@ export default function Auth_System() {
     }
   };
 
-  // Content rendering based on state
   const renderContent = () => {
     switch (view) {
       case 'login':
@@ -147,6 +153,7 @@ export default function Auth_System() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-6 relative bg-slate-50 overflow-hidden font-sans">
+      {/* Background Blurs */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-100 rounded-full blur-[150px] opacity-60"></div>
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-emerald-50 rounded-full blur-[150px] opacity-60"></div>
 
