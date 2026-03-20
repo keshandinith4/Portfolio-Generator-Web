@@ -77,7 +77,7 @@ export default function Create_Portfolio({ setPortfolioData }) {
       const token = user?.token;
 
       if (!token) {
-        alert("කරුණාකර ප්‍රථමයෙන් Login වන්න!");
+        alert("Please login first!");
         navigate('/login');
         return;
       }
@@ -106,7 +106,7 @@ export default function Create_Portfolio({ setPortfolioData }) {
     } catch (err) {
       setIsLoading(false);
       console.error(err);
-      alert(err.response?.data?.message || "Publish කිරීමේදී දෝෂයක් ඇති විය.");
+      alert(err.response?.data?.message || "Publish Failed!");
     }
   };
 
