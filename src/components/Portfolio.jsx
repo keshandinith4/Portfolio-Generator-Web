@@ -9,7 +9,7 @@ import {
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-// ── Scroll reveal hook ────────────────────────────────────────
+// Scroll reveal hook 
 function useReveal() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -45,20 +45,20 @@ export default function Portfolio() {
   const [navScrolled, setNavScrolled] = useState(false);
   const heroRef = useRef(null);
 
-  // ── Dark mode ─────────────────────────────────────────────
+  // Dark mode
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
     localStorage.setItem('theme', dark ? 'dark' : 'light');
   }, [dark]);
 
-  // ── Nav shadow on scroll ──────────────────────────────────
+  // Nav shadow on scroll 
   useEffect(() => {
     const handler = () => setNavScrolled(window.scrollY > 60);
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // ── Fetch + view count ────────────────────────────────────
+  // Fetch + view count 
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -70,7 +70,7 @@ export default function Portfolio() {
     fetch();
   }, [username]);
 
-  // ── SEO meta ──────────────────────────────────────────────
+  // SEO meta 
   useEffect(() => {
     if (!profile) return;
     const d = profile.portfolioData || {};
@@ -108,7 +108,7 @@ export default function Portfolio() {
     canonical.setAttribute('href', url);
   }, [profile]);
 
-  // ── Loading ───────────────────────────────────────────────
+  // Loading 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a]">
       <div className="w-10 h-10 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin mb-4" />
@@ -129,7 +129,7 @@ export default function Portfolio() {
 
   return (
     <>
-      {/* ── Google Font ── */}
+      {/* Google Font */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
@@ -187,7 +187,7 @@ export default function Portfolio() {
         transition: 'background-color 0.3s, color 0.3s'
       }}>
 
-        {/* ══ NAVBAR ══════════════════════════════════════════════ */}
+        {/* Navebar */}
         <nav style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           padding: '0 2rem',
@@ -249,7 +249,7 @@ export default function Portfolio() {
           </div>
         </nav>
 
-        {/* ══ HERO ════════════════════════════════════════════════ */}
+        {/* Hero */}
         <section ref={heroRef} style={{
           minHeight: '100vh',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -421,7 +421,7 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* ══ ABOUT ═══════════════════════════════════════════════ */}
+        {/* About */}
         {d.bio && (
           <section id="about" style={{
             borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
@@ -479,7 +479,7 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* ══ SKILLS ══════════════════════════════════════════════ */}
+        {/* Skills */}
         {d.skills?.filter(Boolean).length > 0 && (
           <section id="skills" style={{
             padding: '120px 2rem',
@@ -534,7 +534,7 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* ══ EXPERIENCE ══════════════════════════════════════════ */}
+        {/* Experience */}
         {d.experience?.filter(e => e.company).length > 0 && (
           <section id="experience" style={{
             padding: '120px 2rem',
@@ -602,7 +602,7 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* ══ PROJECTS ════════════════════════════════════════════ */}
+        {/* Projects */}
         {d.projects?.filter(p => p.name).length > 0 && (
           <section id="work" style={{
             padding: '120px 2rem',
@@ -732,7 +732,7 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* ══ CONTACT / FOOTER ════════════════════════════════════ */}
+        {/* Footer/Contact */}
         <section id="contact" style={{
           padding: '140px 2rem 80px',
           borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,

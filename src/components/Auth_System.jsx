@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Mail, Lock, Eye, EyeOff, User, AtSign } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, AtSign, LogOut } from 'lucide-react'; // LogOut icon එක එකතු කළා
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,6 +13,9 @@ export default function Auth_System() {
   const [usernameStatus, setUsernameStatus] = useState(null);
   const navigate = useNavigate();
 
+  // දැනට login වෙලා ඉන්නවද කියා බැලීමට (Logout button එක පෙන්වීමට පමණක්)
+  const isLoggedIn = !!localStorage.getItem('token');
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,6 +23,23 @@ export default function Auth_System() {
     lastName: '',
     username: ''
   });
+
+  // Logout Function
+  const handleLogout = async () => {
+    try {
+      // Backend එකට logout request එකක් යැවීම (Optional)
+      await axios.post(`${API_URL}/auth/logout`);
+    } catch (err) {
+      console.log("Logout error:", err);
+    } finally {
+      // localStorage clear කර login view එකට යැවීම
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      toast.success('Logged out successfully');
+      setView('login');
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     toast.dismiss('username-status');
@@ -127,36 +147,24 @@ export default function Auth_System() {
 
   return (
     <>
-      {/* react-hot-toast container */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            borderRadius: '12px',
-            fontWeight: '500',
-            fontSize: '14px',
-          },
-          success: {
-            style: { background: '#22c55e', color: '#fff' },
-            iconTheme: { primary: '#fff', secondary: '#22c55e' },
-          },
-          error: {
-            style: { background: '#ef4444', color: '#fff' },
-            iconTheme: { primary: '#fff', secondary: '#ef4444' },
-          },
-          loading: {
-            style: { background: '#64748b', color: '#fff' },
-            iconTheme: { primary: '#fff', secondary: '#64748b' },
-          },
-        }}
-      />
+      <Toaster position="top-right" />
 
       <div className="min-h-screen w-full flex items-center justify-center p-6 relative bg-slate-50 overflow-hidden">
+        
+        {/* Logout Button (Only shows if logged in) */}
+        {isLoggedIn && (
+          <button 
+            onClick={handleLogout}
+            className="absolute top-6 right-6 flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-red-500 font-bold hover:bg-red-50 transition-all z-50"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        )}
+
         <div className="w-full max-w-[480px] relative z-10">
           <div className="bg-white/90 backdrop-blur-2xl border border-white/50 rounded-[3rem] shadow-xl p-8 md:p-12 border-t-white">
 
-            {/* Login */}
             {view === 'login' ? (
               <div className="space-y-6 animate-in fade-in zoom-in duration-300">
                 <div className="text-center">
@@ -208,7 +216,6 @@ export default function Auth_System() {
               </div>
 
             ) : (
-              /* Signup */
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="text-center">
                   <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>

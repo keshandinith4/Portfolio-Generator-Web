@@ -48,6 +48,7 @@ export default function Create_Portfolio() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     console.log("Loaded user from localStorage:", user);
+    console.log("User Id:", user?._id);
     if (!user) return navigate('/login');
 
     setLoggedInUser(user);
@@ -169,17 +170,14 @@ export default function Create_Portfolio() {
     try {
       const user  = JSON.parse(localStorage.getItem("user"));
       const token = localStorage.getItem("token");
+      console.log("Form data to publish:", formData);
 
-      const method   = hasPortfolio ? 'put'  : 'post';
-      const endpoint = hasPortfolio
-        ? `/portfolio/update/${user.username}`
-        : '/portfolio/create';
-
-      const response = await axios[method](
-        `${API_URL}${endpoint}`,
-        formData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      console.log("Publishing portfolio for user:", user?.username);
+      const response = hasPortfolio
+    ? await axios.put(`${API_URL}/portfolio/update/${user?.username}`, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    : await axios.put(`${API_URL}/portfolio/create/${user?.username}`, formData);
 
       if (response.status === 200 || response.status === 201) {
         localStorage.setItem("user", JSON.stringify({
@@ -274,7 +272,7 @@ export default function Create_Portfolio() {
                     <span className="font-bold text-sm">
                       {imageUploading ? "Uploading..." : "Click to upload profile photo"}
                     </span>
-                    <span className="text-xs">JPG, PNG, WEBP — max 5MB</span>
+                    <span className="text-xs">JPG, PNG, WEBP (max 5MB)</span>
                   </button>
                 ) : (
                   /* Image preview with remove button */
@@ -376,7 +374,7 @@ export default function Create_Portfolio() {
                       <p className="font-bold text-sm">
                         {resumeUploading ? "Uploading PDF..." : "Upload Resume / CV"}
                       </p>
-                      <p className="text-xs">PDF only — max 10MB</p>
+                      <p className="text-xs">PDF only (max 10MB)</p>
                     </div>
                   </button>
                 ) : (
