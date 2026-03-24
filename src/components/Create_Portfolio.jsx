@@ -3,22 +3,22 @@ import axios from 'axios';
 import {
   User, Mail, Plus, Send, Trash2, Globe,
   Link2, Rocket, Briefcase, Star, BookOpen,
-  FileText, X, ImageIcon, Sun, Moon,
+  Upload, FileText, X, ImageIcon, Sun, Moon,
   Eye, Edit3, Github, ExternalLink, Download,
-  Award, Code2
+  MapPin, Award, Code2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-const API_URL       = import.meta.env.VITE_API_BASE_URL;
-const CLOUD_NAME    = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const API_URL        = import.meta.env.VITE_API_BASE_URL;
+const CLOUD_NAME     = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET  = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const PROFESSION_SUGGESTIONS = [];
 
-/* ─── Portfolio Preview Component ─── */
-function PortfolioPreview({ formData }) {
-  const dark = formData.theme === 'dark';
+/* Portfolio Preview Component */
+function PortfolioPreview({ formData, darkMode }) {
+  const dark = darkMode;
 
   return (
     <div
@@ -37,6 +37,7 @@ function PortfolioPreview({ formData }) {
             : 'bg-gradient-to-br from-indigo-50 via-white to-purple-50'
         }`}
       >
+        {/* Decorative blobs */}
         <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20 ${dark ? 'bg-indigo-500' : 'bg-purple-300'}`} />
         <div className={`absolute bottom-0 left-0 w-32 h-32 rounded-full blur-3xl opacity-20 ${dark ? 'bg-violet-500' : 'bg-indigo-200'}`} />
 
@@ -91,6 +92,7 @@ function PortfolioPreview({ formData }) {
           )}
         </div>
 
+        {/* Resume badge */}
         {formData.resumeUrl && (
           <span className={`flex items-center gap-2 text-xs px-4 py-2 rounded-full font-bold relative z-10 ${dark ? 'bg-green-900/50 text-green-400 border border-green-800' : 'bg-green-50 text-green-700 border border-green-200'}`}>
             <Download size={12} /> Resume Available
@@ -108,7 +110,14 @@ function PortfolioPreview({ formData }) {
             </h3>
             <div className="flex flex-wrap gap-2">
               {formData.skills.filter(Boolean).map((skill, i) => (
-                <span key={i} className={`text-xs px-3 py-1.5 rounded-xl font-bold ${dark ? 'bg-indigo-900/50 text-indigo-300 border border-indigo-800' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'}`}>
+                <span
+                  key={i}
+                  className={`text-xs px-3 py-1.5 rounded-xl font-bold ${
+                    dark
+                      ? 'bg-indigo-900/50 text-indigo-300 border border-indigo-800'
+                      : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                  }`}
+                >
                   {skill}
                 </span>
               ))}
@@ -124,11 +133,22 @@ function PortfolioPreview({ formData }) {
             </h3>
             <div className="space-y-3">
               {formData.experience.filter(e => e.company).map((exp, i) => (
-                <div key={i} className={`p-4 rounded-2xl border-l-4 ${dark ? 'bg-gray-800 border-indigo-500' : 'bg-slate-50 border-indigo-400'}`}>
+                <div
+                  key={i}
+                  className={`p-4 rounded-2xl border-l-4 ${
+                    dark
+                      ? 'bg-gray-800 border-indigo-500'
+                      : 'bg-slate-50 border-indigo-400'
+                  }`}
+                >
                   <p className={`font-black text-sm ${dark ? 'text-white' : 'text-gray-900'}`}>{exp.company}</p>
                   <p className={`text-xs font-bold mt-0.5 ${dark ? 'text-indigo-400' : 'text-indigo-600'}`}>{exp.role}</p>
-                  {exp.duration && <p className={`text-xs mt-0.5 ${dark ? 'text-gray-500' : 'text-gray-400'}`}>{exp.duration}</p>}
-                  {exp.description && <p className={`text-xs mt-2 leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-600'}`}>{exp.description}</p>}
+                  {exp.duration && (
+                    <p className={`text-xs mt-0.5 ${dark ? 'text-gray-500' : 'text-gray-400'}`}>{exp.duration}</p>
+                  )}
+                  {exp.description && (
+                    <p className={`text-xs mt-2 leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-600'}`}>{exp.description}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -143,10 +163,21 @@ function PortfolioPreview({ formData }) {
             </h3>
             <div className="grid grid-cols-1 gap-3">
               {formData.projects.filter(p => p.name).map((proj, i) => (
-                <div key={i} className={`p-4 rounded-2xl ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-slate-200 shadow-sm'}`}>
+                <div
+                  key={i}
+                  className={`p-4 rounded-2xl ${
+                    dark
+                      ? 'bg-gray-800 border border-gray-700'
+                      : 'bg-white border border-slate-200 shadow-sm'
+                  }`}
+                >
                   <p className={`font-black text-sm ${dark ? 'text-white' : 'text-gray-900'}`}>{proj.name}</p>
-                  {proj.toolsUsed && <p className={`text-xs font-bold mt-1 ${dark ? 'text-purple-400' : 'text-purple-600'}`}>{proj.toolsUsed}</p>}
-                  {proj.description && <p className={`text-xs mt-2 leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{proj.description}</p>}
+                  {proj.toolsUsed && (
+                    <p className={`text-xs font-bold mt-1 ${dark ? 'text-purple-400' : 'text-purple-600'}`}>{proj.toolsUsed}</p>
+                  )}
+                  {proj.description && (
+                    <p className={`text-xs mt-2 leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{proj.description}</p>
+                  )}
                   {(proj.projectLink || proj.liveDemo) && (
                     <div className="flex gap-2 mt-3">
                       {proj.projectLink && (
@@ -173,9 +204,9 @@ function PortfolioPreview({ formData }) {
 }
 
 
-/* ─── Main Component ─── */
+/* Main Component */
 export default function Create_Portfolio() {
-  const navigate       = useNavigate();
+  const navigate = useNavigate();
   const imageInputRef  = useRef(null);
   const resumeInputRef = useRef(null);
 
@@ -184,6 +215,7 @@ export default function Create_Portfolio() {
   const [step,            setStep]            = useState(1);
   const [isLoading,       setIsLoading]       = useState(false);
   const [loggedInUser,    setLoggedInUser]    = useState(null);
+  const [previewDark,     setPreviewDark]     = useState(false);
 
   const [imageUploading,  setImageUploading]  = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
@@ -196,10 +228,9 @@ export default function Create_Portfolio() {
     bio:          '',
     profileImage: '',
     resumeUrl:    '',
-    theme:        'light',           // ← user's chosen theme saved here
-    contact:    { email: '', linkedin: '', github: '', website: '' },
-    skills:     [''],
-    projects:   [{ name: '', description: '', toolsUsed: '', projectLink: '', liveDemo: '' }],
+    contact:  { email: '', linkedin: '', github: '', website: '' },
+    skills:   [''],
+    projects: [{ name: '', description: '', toolsUsed: '', projectLink: '', liveDemo: '' }],
     experience: [{ company: '', role: '', duration: '', description: '' }]
   });
 
@@ -208,7 +239,7 @@ export default function Create_Portfolio() {
     if (!user) return navigate('/login');
     setLoggedInUser(user);
     if (user.hasPortfolio && user.portfolioData) {
-      setFormData(prev => ({ ...prev, ...user.portfolioData, theme: user.portfolioData.theme || 'light' }));
+      setFormData(prev => ({ ...prev, ...user.portfolioData }));
       setHasPortfolio(true);
       if (user.portfolioData.profileImage) setImagePreview(user.portfolioData.profileImage);
       if (user.portfolioData.resumeUrl)    setResumeFileName('resume_uploaded.pdf');
@@ -218,22 +249,24 @@ export default function Create_Portfolio() {
   }, []);
 
   const uploadToCloudinary = async (file, folder = 'portfolios', resourceType = 'auto') => {
-    const data = new FormData();
-    data.append('file', file);
-    data.append('upload_preset', UPLOAD_PRESET);
-    data.append('folder', folder);
-    const res = await axios.post(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
-      data
-    );
-    return res.data.secure_url;
-  };
+  const data = new FormData();
+  data.append('file', file);
+  data.append('upload_preset', UPLOAD_PRESET);
+  data.append('folder', folder);
+
+  const res = await axios.post(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
+    data
+  );
+
+  return res.data.secure_url;
+};
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/'))  return alert("Please select an image file.");
-    if (file.size > 5 * 1024 * 1024)     return alert("Image must be under 5MB.");
+    if (!file.type.startsWith('image/'))         return alert("Please select an image file.");
+    if (file.size > 5 * 1024 * 1024)             return alert("Image must be under 5MB.");
     setImagePreview(URL.createObjectURL(file));
     setImageUploading(true);
     try {
@@ -248,12 +281,12 @@ export default function Create_Portfolio() {
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.type !== 'application/pdf')  return alert("Please select a PDF file.");
-    if (file.size > 10 * 1024 * 1024)    return alert("Resume PDF must be under 10MB.");
+    if (file.type !== 'application/pdf')          return alert("Please select a PDF file.");
+    if (file.size > 10 * 1024 * 1024)            return alert("Resume PDF must be under 10MB.");
     setResumeFileName(file.name);
     setResumeUploading(true);
     try {
-      const url = await uploadToCloudinary(file, 'portfolios/resumes', 'image');
+      const url = await uploadToCloudinary(file, 'portfolios/resumes', 'image'); 
       setFormData(prev => ({ ...prev, resumeUrl: url }));
     } catch {
       alert("Resume upload failed. Please try again.");
@@ -319,7 +352,7 @@ export default function Create_Portfolio() {
     }
   };
 
-  /* ── Landing screen ── */
+  // Landing screen 
   if (!isEditing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
@@ -345,7 +378,7 @@ export default function Create_Portfolio() {
     );
   }
 
-  /* ── Multi-step form ── */
+  // Multi-step form 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
       <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100">
@@ -359,7 +392,7 @@ export default function Create_Portfolio() {
 
         <div className="p-8 md:p-12">
 
-          {/* ── Step 1: Personal Info ── */}
+          {/* Personal Info */}
           {step === 1 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-center gap-2 font-black text-xl mb-6 text-gray-800">
@@ -372,13 +405,17 @@ export default function Create_Portfolio() {
                 <span className="ml-auto text-xs text-gray-400 italic">cannot be changed</span>
               </div>
 
-              {/* Profile Image */}
+              {/* Profile Image Upload */}
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Profile Photo</p>
                 <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 {!imagePreview ? (
-                  <button type="button" onClick={() => imageInputRef.current.click()} disabled={imageUploading}
-                    className="w-full p-6 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center gap-2 hover:border-indigo-400 hover:bg-indigo-50 transition-all text-slate-400 hover:text-indigo-500">
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current.click()}
+                    disabled={imageUploading}
+                    className="w-full p-6 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center gap-2 hover:border-indigo-400 hover:bg-indigo-50 transition-all text-slate-400 hover:text-indigo-500"
+                  >
                     <ImageIcon size={32} />
                     <span className="font-bold text-sm">{imageUploading ? "Uploading..." : "Click to upload profile photo"}</span>
                     <span className="text-xs">JPG, PNG, WEBP (max 5MB)</span>
@@ -432,7 +469,7 @@ export default function Create_Portfolio() {
                 className="w-full p-4 bg-slate-50 rounded-2xl h-32 outline-none border border-transparent focus:border-indigo-200 transition-all resize-none"
               />
 
-              {/* Resume */}
+              {/* Resume PDF Upload */}
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Resume / CV (PDF)</p>
                 <input ref={resumeInputRef} type="file" accept="application/pdf" onChange={handleResumeUpload} className="hidden" />
@@ -462,7 +499,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* ── Step 2: Contact ── */}
+          {/* Contact */}
           {step === 2 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-center gap-2 font-black text-xl mb-6 text-gray-800">
@@ -482,7 +519,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* ── Step 3: Skills & Experience ── */}
+          {/* Skills & Experience */}
           {step === 3 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               {/* Skills */}
@@ -544,7 +581,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* ── Step 4: Projects ── */}
+          {/* Projects */}
           {step === 4 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex justify-between items-center mb-6">
@@ -594,113 +631,64 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* ── Step 5: Theme Picker + Preview + Publish ── */}
+          {/* Preview & Publish */}
           {step === 5 && (
             <div className="animate-in fade-in slide-in-from-bottom-4">
 
-              <div className="flex items-center gap-2 font-black text-xl text-gray-800 mb-6">
-                <Eye className="text-indigo-600" size={22} /> Choose Theme & Preview
+              {/* Header row */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2 font-black text-xl text-gray-800">
+                  <Eye className="text-indigo-600" size={22} /> Portfolio Preview
+                </div>
+
+                {/* Light / Dark toggle */}
+                <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl">
+                  <button
+                    onClick={() => setPreviewDark(false)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                      !previewDark
+                        ? 'bg-white shadow-md text-gray-800'
+                        : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    <Sun size={15} /> Light
+                  </button>
+                  <button
+                    onClick={() => setPreviewDark(true)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                      previewDark
+                        ? 'bg-gray-900 shadow-md text-white'
+                        : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    <Moon size={15} /> Dark
+                  </button>
+                </div>
               </div>
 
-              {/* ── Theme Picker Cards ── */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-
-                {/* Light Theme Card */}
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, theme: 'light' }))}
-                  className={`relative p-5 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all duration-200 cursor-pointer ${
-                    formData.theme === 'light'
-                      ? 'border-indigo-500 bg-indigo-50 shadow-lg shadow-indigo-100'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
-                  }`}
-                >
-                  {formData.theme === 'light' && (
-                    <span className="absolute top-3 right-3 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </span>
-                  )}
-                  {/* Mini light preview */}
-                  <div className="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-3 flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-100" />
-                      <div className="w-16 h-2 bg-gray-300 rounded-full" />
-                      <div className="w-10 h-1.5 bg-indigo-200 rounded-full" />
-                    </div>
-                    <div className="p-2 space-y-1">
-                      <div className="w-full h-1.5 bg-slate-100 rounded-full" />
-                      <div className="w-3/4 h-1.5 bg-slate-100 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sun size={16} className={formData.theme === 'light' ? 'text-indigo-500' : 'text-gray-400'} />
-                    <span className={`text-sm font-black ${formData.theme === 'light' ? 'text-indigo-600' : 'text-gray-500'}`}>
-                      Light
-                    </span>
-                  </div>
-                </button>
-
-                {/* Dark Theme Card */}
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, theme: 'dark' }))}
-                  className={`relative p-5 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all duration-200 cursor-pointer ${
-                    formData.theme === 'dark'
-                      ? 'border-indigo-500 bg-gray-950 shadow-lg shadow-indigo-900/30'
-                      : 'border-slate-200 bg-gray-50 hover:border-slate-300'
-                  }`}
-                >
-                  {formData.theme === 'dark' && (
-                    <span className="absolute top-3 right-3 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </span>
-                  )}
-                  {/* Mini dark preview */}
-                  <div className="w-full bg-gray-900 rounded-xl border border-gray-700 overflow-hidden shadow-sm">
-                    <div className="bg-gradient-to-r from-gray-800 to-indigo-950 p-3 flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-lg bg-gray-700" />
-                      <div className="w-16 h-2 bg-gray-600 rounded-full" />
-                      <div className="w-10 h-1.5 bg-indigo-800 rounded-full" />
-                    </div>
-                    <div className="p-2 space-y-1">
-                      <div className="w-full h-1.5 bg-gray-700 rounded-full" />
-                      <div className="w-3/4 h-1.5 bg-gray-700 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Moon size={16} className={formData.theme === 'dark' ? 'text-indigo-400' : 'text-gray-400'} />
-                    <span className={`text-sm font-black ${formData.theme === 'dark' ? 'text-indigo-400' : 'text-gray-500'}`}>
-                      Dark
-                    </span>
-                  </div>
-                </button>
-
-              </div>
-
-              {/* Upload warning */}
+              {/* Upload warnings */}
               {(imageUploading || resumeUploading) && (
                 <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl text-yellow-700 text-sm font-bold">
                   ⏳ Please wait — uploads still in progress...
                 </div>
               )}
 
-              {/* Preview card */}
+              {/* Preview card — scrollable */}
               <div className="max-h-[480px] overflow-y-auto rounded-3xl ring-1 ring-slate-200 shadow-inner mb-6">
-                <PortfolioPreview formData={formData} />
+                <PortfolioPreview formData={formData} darkMode={previewDark} />
               </div>
 
               {/* Action buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
+                {/* Back to edit */}
                 <button
                   onClick={() => setStep(4)}
                   className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold border-2 border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 transition-all"
                 >
                   <Edit3 size={18} /> Edit Details
                 </button>
+
+                {/* Publish */}
                 <button
                   onClick={handlePublish}
                   disabled={isLoading || imageUploading || resumeUploading}
