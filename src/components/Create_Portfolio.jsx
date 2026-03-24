@@ -215,7 +215,7 @@ export default function Create_Portfolio() {
   const [step,            setStep]            = useState(1);
   const [isLoading,       setIsLoading]       = useState(false);
   const [loggedInUser,    setLoggedInUser]    = useState(null);
-  const [previewDark,     setPreviewDark]     = useState(false);  // ✅ controls preview theme
+  const [previewDark,     setPreviewDark]     = useState(false); 
 
   const [imageUploading,  setImageUploading]  = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
