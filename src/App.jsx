@@ -4,6 +4,7 @@ import Home_Page from './pages/Home_Page.jsx';
 import Auth_System from './components/Auth_System.jsx';
 import Create_Portfolio from './components/Create_Portfolio.jsx';
 import Portfolio from './components/Portfolio.jsx'; 
+import About_Us from './components/About_Us.jsx';
 
 function App() {
   const [portfolioData, setPortfolioData] = useState(null);
@@ -18,6 +19,7 @@ function App() {
           <Route path="/edit/:username" element={<Create_Portfolio isEditing={true} />} />
           <Route path="/portfolio/:username" element={<Portfolio />} />
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/about" element={<About_Us />} />
         </Routes>
       </BrowserRouter>
     </div>

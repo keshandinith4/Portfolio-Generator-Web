@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Mail, Lock, Eye, EyeOff, User, AtSign, LogOut } from 'lucide-react'; // LogOut icon එක එකතු කළා
+import { Mail, Lock, Eye, EyeOff, User, AtSign, LogOut } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,7 +13,7 @@ export default function Auth_System() {
   const [usernameStatus, setUsernameStatus] = useState(null);
   const navigate = useNavigate();
 
-  // දැනට login වෙලා ඉන්නවද කියා බැලීමට (Logout button එක පෙන්වීමට පමණක්)
+  // Check if user is already logged in
   const isLoggedIn = !!localStorage.getItem('token');
 
   const [formData, setFormData] = useState({
@@ -27,12 +27,11 @@ export default function Auth_System() {
   // Logout Function
   const handleLogout = async () => {
     try {
-      // Backend එකට logout request එකක් යැවීම (Optional)
       await axios.post(`${API_URL}/auth/logout`);
     } catch (err) {
       console.log("Logout error:", err);
     } finally {
-      // localStorage clear කර login view එකට යැවීම
+     
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       toast.success('Logged out successfully');

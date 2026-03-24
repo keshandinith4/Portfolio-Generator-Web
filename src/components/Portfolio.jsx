@@ -6,6 +6,7 @@ import {
   Briefcase, Sun, Moon, Eye, FileText, Link2,
   ArrowUpRight, MapPin, ChevronDown
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,12 +45,8 @@ export default function Portfolio() {
   const [dark, setDark]        = useState(() => localStorage.getItem('theme') === 'dark');
   const [navScrolled, setNavScrolled] = useState(false);
   const heroRef = useRef(null);
-
-  // Dark mode
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }, [dark]);
+  const loggedUser = JSON.parse(localStorage.getItem("user")); 
+  const isOwner = loggedUser && loggedUser.username === username;
 
   // Nav shadow on scroll 
   useEffect(() => {
@@ -62,7 +59,7 @@ export default function Portfolio() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await axios.patch(`${API_URL}/portfolio/${username}/view`);
+        const res = await axios.post(`${API_URL}/portfolio/${username}/view`);
         setProfile(res.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
@@ -121,7 +118,20 @@ export default function Portfolio() {
       404 — NOT FOUND
     </div>
   );
+  const handleDelete = async () => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this portfolio?");
+  if (!confirmDelete) return;
 
+  try {
+    await axios.delete(`${API_URL}/portfolio/${username}`);
+    toast.success("Portfolio deleted");
+
+    window.location.href = "/";
+  } catch (err) {
+    console.error(err);
+    toast.error("Delete failed");
+  }
+};
   const d = profile.portfolioData || {};
   const initials = d.fullName
     ? d.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -131,7 +141,7 @@ export default function Portfolio() {
     <>
       {/* Google Font */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap');
 
         * { box-sizing: border-box; }
 
@@ -234,18 +244,7 @@ export default function Portfolio() {
                 {label}
               </a>
             ))}
-
-            {/* Dark mode toggle */}
-            <button onClick={() => setDark(d => !d)} style={{
-              width: 36, height: 36,
-              borderRadius: 8, border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
-              background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', color: dark ? '#e8e8e4' : '#1a1a2e',
-              transition: 'all 0.2s'
-            }}>
-              {dark ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
+            
           </div>
         </nav>
 
@@ -335,21 +334,25 @@ export default function Portfolio() {
                   View My Work <ArrowUpRight size={15} />
                 </a>
 
-                {d.resumeUrl && (
-                  <a href={d.resumeUrl} target="_blank" rel="noreferrer" style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    padding: '12px 24px', borderRadius: 10,
-                    border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
-                    background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-                    color: dark ? '#e8e8e4' : '#1a1a2e', textDecoration: 'none',
-                    fontSize: 14, fontWeight: 500, transition: 'all 0.2s'
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
-                  >
-                    <FileText size={14} /> Resume
-                  </a>
-                )}
+               {d.resumeUrl && (
+  <a 
+    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment:false/')}
+    target="_blank" 
+    rel="noreferrer" 
+    style={{
+      display: 'inline-flex', alignItems: 'center', gap: 8,
+      padding: '12px 24px', borderRadius: 10,
+      border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
+      background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+      color: dark ? '#e8e8e4' : '#1a1a2e', textDecoration: 'none',
+      fontSize: 14, fontWeight: 500, transition: 'all 0.2s'
+    }}
+    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
+    onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
+  >
+    <FileText size={14} /> Resume
+  </a>
+)}
               </div>
 
               {/* Socials */}
@@ -391,7 +394,7 @@ export default function Portfolio() {
               <div className="float" style={{ flexShrink: 0 }}>
                 <div style={{
                   width: 260, height: 320, borderRadius: 24,
-                  overflow: 'hidden', transform: 'rotate(3deg)',
+                  overflow: 'hidden', transform: 'rotate(-3deg)',
                   boxShadow: dark
                     ? '0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)'
                     : '0 40px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)',
@@ -433,13 +436,13 @@ export default function Portfolio() {
                   <span className="font-mono-dm" style={{
                     fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
                     color: '#6366f1', display: 'block', marginBottom: 12
-                  }}>02 / About</span>
+                  }}>About</span>
                   <h2 className="font-display" style={{
                     fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400,
                     lineHeight: 1.1, letterSpacing: '-0.02em',
                     color: dark ? '#f0f0ec' : '#0f0f1a', margin: 0, maxWidth: 280
                   }}>
-                    A little about me.
+                    About me
                   </h2>
                 </div>
               </Reveal>
@@ -492,13 +495,13 @@ export default function Portfolio() {
                 <span className="font-mono-dm" style={{
                   fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
                   color: '#6366f1', display: 'block', marginBottom: 12
-                }}>03 / Skills</span>
+                }}>Skills</span>
                 <h2 className="font-display" style={{
                   fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400,
                   lineHeight: 1.1, letterSpacing: '-0.02em',
                   color: dark ? '#f0f0ec' : '#0f0f1a', margin: '0 0 3rem'
                 }}>
-                  What I bring<br /><em>to the table.</em>
+                  Professional Skills
                 </h2>
               </Reveal>
 
@@ -545,13 +548,13 @@ export default function Portfolio() {
                 <span className="font-mono-dm" style={{
                   fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
                   color: '#6366f1', display: 'block', marginBottom: 12
-                }}>04 / Experience</span>
+                }}>Experience</span>
                 <h2 className="font-display" style={{
                   fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400,
                   lineHeight: 1.1, letterSpacing: '-0.02em',
                   color: dark ? '#f0f0ec' : '#0f0f1a', margin: '0 0 4rem'
                 }}>
-                  Where I've<br /><em>worked.</em>
+                  Where I've worked
                 </h2>
               </Reveal>
 
@@ -613,13 +616,13 @@ export default function Portfolio() {
                 <span className="font-mono-dm" style={{
                   fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
                   color: '#6366f1', display: 'block', marginBottom: 12
-                }}>05 / Work</span>
+                }}>Work</span>
                 <h2 className="font-display" style={{
                   fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400,
                   lineHeight: 1.1, letterSpacing: '-0.02em',
                   color: dark ? '#f0f0ec' : '#0f0f1a', margin: '0 0 4rem'
                 }}>
-                  Selected<br /><em>projects.</em>
+                  Selected Projects
                 </h2>
               </Reveal>
 
@@ -745,9 +748,9 @@ export default function Portfolio() {
               <span className="font-mono-dm" style={{
                 fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
                 color: '#6366f1', display: 'block', marginBottom: 12
-              }}>06 / Contact</span>
+              }}>Contact</span>
               <h2 className="font-display" style={{
-                fontSize: 'clamp(48px, 8vw, 96px)', fontWeight: 400,
+                fontSize: 'clamp(40px, 8vw, 85px)', fontWeight: 400,
                 lineHeight: 1.0, letterSpacing: '-0.03em',
                 color: dark ? '#f0f0ec' : '#0f0f1a', margin: '0 0 0.5rem'
               }}>
@@ -833,6 +836,72 @@ export default function Portfolio() {
             </div>
           </div>
         </section>
+
+        {isOwner && (
+        <div style={{
+          position: 'fixed',
+          top: '80px',
+          right: '24px',
+          display: 'flex',
+          gap: '10px',
+          zIndex: 200
+        }}>
+    
+          {/* Update Button */}
+          <button
+            onClick={() => window.location.href = `/edit/${username}`}
+            style={{
+              padding: '8px 14px',
+              borderRadius: 8,
+              border: '1px solid #6366f1',
+              background: dark ? 'rgba(99,102,241,0.1)' : '#fff',
+              color: '#6366f1',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              backdropFilter: 'blur(8px)'
+            }}
+          >
+            Update
+          </button>
+
+          {/* Delete Button */}
+          <button
+           onClick={handleDelete}
+            style={{
+              padding: '8px 14px',
+              borderRadius: 8,
+              border: '1px solid #ef4444',
+              background: dark ? 'rgba(239,68,68,0.1)' : '#fff',
+              color: '#ef4444',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              backdropFilter: 'blur(8px)'
+            }}
+         >
+            Delete
+          </button>
+          {/* Back to Website Button */}
+      <button
+        onClick={() => window.location.href = '/login'}
+        style={{
+          padding: '8px 14px',
+          borderRadius: 8,
+          border: '1px solid #9ca3af',
+          background: dark ? 'rgba(255,255,255,0.05)' : '#fff',
+          color: dark ? '#e5e7eb' : '#374151',
+          fontSize: 12,
+          fontWeight: 600,
+          cursor: 'pointer',
+          backdropFilter: 'blur(8px)'
+        }}
+      >
+        ← Back to Login
+      </button>
+
+  </div>
+)}
       </div>
     </>
   );
