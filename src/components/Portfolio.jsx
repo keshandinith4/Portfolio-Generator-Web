@@ -260,24 +260,6 @@ export default function Portfolio() {
                 {label}
               </a>
             ))}
-
-            {/* Dark / Light toggle button */}
-            <button
-              onClick={toggleDark}
-              className="theme-toggle"
-              title={dark ? 'Switch to Light mode' : 'Switch to Dark mode'}
-              style={{
-                width: 36, height: 36, borderRadius: 9,
-                border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
-                background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
-                color: dark ? 'rgba(232,232,228,0.7)' : 'rgba(26,26,46,0.5)',
-                cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0
-              }}
-            >
-              {dark ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
           </div>
         </nav>
 

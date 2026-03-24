@@ -215,7 +215,7 @@ export default function Create_Portfolio() {
   const [step,            setStep]            = useState(1);
   const [isLoading,       setIsLoading]       = useState(false);
   const [loggedInUser,    setLoggedInUser]    = useState(null);
-  const [previewDark,     setPreviewDark]     = useState(false); 
+  const [previewDark,     setPreviewDark]     = useState(() => localStorage.getItem('theme') === 'dark');
 
   const [imageUploading,  setImageUploading]  = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
@@ -390,7 +390,7 @@ export default function Create_Portfolio() {
 
         <div className="p-8 md:p-12">
 
-          {/* Personal Info */}
+          {/* Step 1 — Personal Info */}
           {step === 1 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-center gap-2 font-black text-xl mb-6 text-gray-800">
@@ -497,7 +497,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* Contact */}
+          {/* Step 2 — Contact */}
           {step === 2 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-center gap-2 font-black text-xl mb-6 text-gray-800">
@@ -517,7 +517,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* Skills & Experience */}
+          {/* Step 3 — Skills & Experience */}
           {step === 3 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               {/* Skills */}
@@ -579,7 +579,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* Projects */}
+          {/* Step 4 — Projects */}
           {step === 4 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex justify-between items-center mb-6">
@@ -629,7 +629,7 @@ export default function Create_Portfolio() {
             </div>
           )}
 
-          {/* Preview & Publish */}
+          {/* Step 5 — Preview & Publish */}
           {step === 5 && (
             <div className="animate-in fade-in slide-in-from-bottom-4">
 
@@ -639,10 +639,13 @@ export default function Create_Portfolio() {
                   <Eye className="text-indigo-600" size={22} /> Portfolio Preview
                 </div>
 
-                {/* Light / Dark toggle */}
+                {/* Light / Dark toggle — also saves to localStorage so Portfolio.jsx uses same theme */}
                 <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl">
                   <button
-                    onClick={() => setPreviewDark(false)}
+                    onClick={() => {
+                      setPreviewDark(false);
+                      localStorage.setItem('theme', 'light');
+                    }}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
                       !previewDark
                         ? 'bg-white shadow-md text-gray-800'
@@ -652,7 +655,10 @@ export default function Create_Portfolio() {
                     <Sun size={15} /> Light
                   </button>
                   <button
-                    onClick={() => setPreviewDark(true)}
+                    onClick={() => {
+                      setPreviewDark(true);
+                      localStorage.setItem('theme', 'dark');
+                    }}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
                       previewDark
                         ? 'bg-gray-900 shadow-md text-white'
