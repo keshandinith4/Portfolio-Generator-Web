@@ -55,6 +55,14 @@ export default function Portfolio() {
     localStorage.setItem('theme', newDark ? 'dark' : 'light');
   };
 
+  // Fix Cloudinary resume URL for proper PDF download
+  const getResumeDownloadUrl = (url) => {
+    if (!url) return '#';
+    return url
+      .replace('/image/upload/', '/raw/upload/')
+      .replace('/raw/upload/', '/raw/upload/fl_attachment/');
+  };
+
   // Nav shadow on scroll
   useEffect(() => {
     const handler = () => setNavScrolled(window.scrollY > 60);
@@ -130,18 +138,17 @@ export default function Portfolio() {
     const confirmDelete = window.confirm("Are you sure you want to delete this portfolio?");
     if (!confirmDelete) return;
     try {
-        const token = localStorage.getItem('token'); // get the token
-
-        await axios.delete(`${API_URL}/portfolio/${username}`, {
-            headers: {
-                Authorization: `Bearer ${token}`, // attach it
-            },
-        });
-        toast.success("Portfolio deleted");
-        window.location.href = "/";
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_URL}/portfolio/${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Portfolio deleted");
+      window.location.href = "/";
     } catch (err) {
-        console.error(err);
-        toast.error("Delete failed");
+      console.error(err);
+      toast.error("Delete failed");
     }
   };
 
@@ -218,7 +225,7 @@ export default function Portfolio() {
         transition: 'background-color 0.3s, color 0.3s'
       }}>
 
-        {/* dark/light toggle button */}
+        {/* Navbar */}
         <nav style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           padding: '0 2rem',
@@ -246,7 +253,7 @@ export default function Portfolio() {
             {initials}
           </div>
 
-          {/* Nav links + toggle */}
+          {/* Nav links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             {[
               d.bio        && { label: 'About',      href: '#about'      },
@@ -355,11 +362,12 @@ export default function Portfolio() {
                   View My Work <ArrowUpRight size={15} />
                 </a>
 
+                {/* ✅ Fixed resume download URL */}
                 {d.resumeUrl && (
                   <a
-                    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment/')}
+                    href={getResumeDownloadUrl(d.resumeUrl)}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noreferrer noopener"
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 8,
                       padding: '12px 24px', borderRadius: 10,
