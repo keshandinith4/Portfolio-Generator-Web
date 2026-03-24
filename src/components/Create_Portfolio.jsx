@@ -37,7 +37,7 @@ export default function Create_Portfolio() {
     title:        '',
     bio:          '',
     profileImage: '',   // Cloudinary URL
-    resumeUrl:    '',   // Cloudinary PDF URL
+    resumeUrl:    '',   // Cloudinary URL
     contact:  { email: '', linkedin: '', github: '', website: '' },
     skills:   [''],
     projects: [{ name: '', description: '', toolsUsed: '', projectLink: '', liveDemo: '' }],
@@ -177,7 +177,9 @@ export default function Create_Portfolio() {
     ? await axios.put(`${API_URL}/portfolio/update/${user?.username}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       })
-    : await axios.put(`${API_URL}/portfolio/create/${user?.username}`, formData);
+    : await axios.put(`${API_URL}/portfolio/create/${user?.username}`, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
 
       if (response.status === 200 || response.status === 201) {
         localStorage.setItem("user", JSON.stringify({

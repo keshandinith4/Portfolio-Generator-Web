@@ -62,7 +62,7 @@ export default function Portfolio() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await axios.patch(`${API_URL}/portfolio/${username}/view`);
+        const res = await axios.post(`${API_URL}/portfolio/${username}/view`);
         setProfile(res.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
