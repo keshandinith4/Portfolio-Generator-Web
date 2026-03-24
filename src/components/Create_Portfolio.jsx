@@ -215,7 +215,7 @@ export default function Create_Portfolio() {
   const [step,            setStep]            = useState(1);
   const [isLoading,       setIsLoading]       = useState(false);
   const [loggedInUser,    setLoggedInUser]    = useState(null);
-  const [previewDark,     setPreviewDark]     = useState(false);
+  const [previewDark,     setPreviewDark]     = useState(false);  // ✅ controls preview theme
 
   const [imageUploading,  setImageUploading]  = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
@@ -249,24 +249,22 @@ export default function Create_Portfolio() {
   }, []);
 
   const uploadToCloudinary = async (file, folder = 'portfolios', resourceType = 'auto') => {
-  const data = new FormData();
-  data.append('file', file);
-  data.append('upload_preset', UPLOAD_PRESET);
-  data.append('folder', folder);
-
-  const res = await axios.post(
-    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
-    data
-  );
-
-  return res.data.secure_url;
-};
+    const data = new FormData();
+    data.append('file', file);
+    data.append('upload_preset', UPLOAD_PRESET);
+    data.append('folder', folder);
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
+      data
+    );
+    return res.data.secure_url;
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/'))         return alert("Please select an image file.");
-    if (file.size > 5 * 1024 * 1024)             return alert("Image must be under 5MB.");
+    if (!file.type.startsWith('image/'))   return alert("Please select an image file.");
+    if (file.size > 5 * 1024 * 1024)       return alert("Image must be under 5MB.");
     setImagePreview(URL.createObjectURL(file));
     setImageUploading(true);
     try {
@@ -281,12 +279,12 @@ export default function Create_Portfolio() {
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.type !== 'application/pdf')          return alert("Please select a PDF file.");
-    if (file.size > 10 * 1024 * 1024)            return alert("Resume PDF must be under 10MB.");
+    if (file.type !== 'application/pdf')   return alert("Please select a PDF file.");
+    if (file.size > 10 * 1024 * 1024)     return alert("Resume PDF must be under 10MB.");
     setResumeFileName(file.name);
     setResumeUploading(true);
     try {
-      const url = await uploadToCloudinary(file, 'portfolios/resumes', 'image'); 
+      const url = await uploadToCloudinary(file, 'portfolios/resumes', 'image');
       setFormData(prev => ({ ...prev, resumeUrl: url }));
     } catch {
       alert("Resume upload failed. Please try again.");
@@ -352,7 +350,7 @@ export default function Create_Portfolio() {
     }
   };
 
-  // Landing screen 
+  // Landing screen
   if (!isEditing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
@@ -378,7 +376,7 @@ export default function Create_Portfolio() {
     );
   }
 
-  // Multi-step form 
+  // Multi-step form
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
       <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100">
@@ -680,7 +678,6 @@ export default function Create_Portfolio() {
 
               {/* Action buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
-                {/* Back to edit */}
                 <button
                   onClick={() => setStep(4)}
                   className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold border-2 border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 transition-all"
@@ -688,7 +685,6 @@ export default function Create_Portfolio() {
                   <Edit3 size={18} /> Edit Details
                 </button>
 
-                {/* Publish */}
                 <button
                   onClick={handlePublish}
                   disabled={isLoading || imageUploading || resumeUploading}

@@ -3,14 +3,14 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import {
   Github, Linkedin, Mail, ExternalLink, Globe,
-  Briefcase, Sun, Moon, Eye, FileText, Link2,
-  ArrowUpRight, MapPin, ChevronDown
+  Briefcase, Eye, FileText, Link2,
+  ArrowUpRight, MapPin, ChevronDown, Sun, Moon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Scroll reveal hook 
+// Scroll reveal hook
 function useReveal() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -42,32 +42,39 @@ export default function Portfolio() {
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading]  = useState(true);
-  const [dark, setDark]        = useState(() => localStorage.getItem('theme') === 'dark');
+
+  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
   const [navScrolled, setNavScrolled] = useState(false);
   const heroRef = useRef(null);
-  const loggedUser = JSON.parse(localStorage.getItem("user")); 
+  const loggedUser = JSON.parse(localStorage.getItem("user"));
   const isOwner = loggedUser && loggedUser.username === username;
 
-  // Nav shadow on scroll 
+  const toggleDark = () => {
+    const newDark = !dark;
+    setDark(newDark);
+    localStorage.setItem('theme', newDark ? 'dark' : 'light');
+  };
+
+  // Nav shadow on scroll
   useEffect(() => {
     const handler = () => setNavScrolled(window.scrollY > 60);
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // Fetch + view count 
+  // Fetch + view count
   useEffect(() => {
-    const fetch = async () => {
+    const fetchPortfolio = async () => {
       try {
         const res = await axios.post(`${API_URL}/portfolio/${username}/view`);
         setProfile(res.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
-    fetch();
+    fetchPortfolio();
   }, [username]);
 
-  // SEO meta 
+  // SEO meta
   useEffect(() => {
     if (!profile) return;
     const d = profile.portfolioData || {};
@@ -105,7 +112,7 @@ export default function Portfolio() {
     canonical.setAttribute('href', url);
   }, [profile]);
 
-  // Loading 
+  // Loading
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a]">
       <div className="w-10 h-10 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin mb-4" />
@@ -118,20 +125,20 @@ export default function Portfolio() {
       404 — NOT FOUND
     </div>
   );
+
   const handleDelete = async () => {
-  const confirmDelete = window.confirm("Are you sure you want to delete this portfolio?");
-  if (!confirmDelete) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this portfolio?");
+    if (!confirmDelete) return;
+    try {
+      await axios.delete(`${API_URL}/portfolio/${username}`);
+      toast.success("Portfolio deleted");
+      window.location.href = "/";
+    } catch (err) {
+      console.error(err);
+      toast.error("Delete failed");
+    }
+  };
 
-  try {
-    await axios.delete(`${API_URL}/portfolio/${username}`);
-    toast.success("Portfolio deleted");
-
-    window.location.href = "/";
-  } catch (err) {
-    console.error(err);
-    toast.error("Delete failed");
-  }
-};
   const d = profile.portfolioData || {};
   const initials = d.fullName
     ? d.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -188,6 +195,14 @@ export default function Portfolio() {
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
+
+        .theme-toggle {
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .theme-toggle:hover {
+          border-color: #6366f1 !important;
+          color: #6366f1 !important;
+        }
       `}</style>
 
       <div style={{
@@ -197,7 +212,7 @@ export default function Portfolio() {
         transition: 'background-color 0.3s, color 0.3s'
       }}>
 
-        {/* Navebar */}
+        {/* dark/light toggle button */}
         <nav style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           padding: '0 2rem',
@@ -219,12 +234,13 @@ export default function Portfolio() {
             background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'DM Mono, monospace', fontWeight: 500, fontSize: 13,
-            color: '#fff', letterSpacing: '0.05em'
+            color: '#fff', letterSpacing: '0.05em',
+            flexShrink: 0
           }}>
             {initials}
           </div>
 
-          {/* Nav links */}
+          {/* Nav links + toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             {[
               d.bio        && { label: 'About',      href: '#about'      },
@@ -244,15 +260,22 @@ export default function Portfolio() {
                 {label}
               </a>
             ))}
-            {/* Dark mode toggle */}
-            <button onClick={() => setDark(d => !d)} style={{
-              width: 36, height: 36,
-              borderRadius: 8, border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
-              background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', color: dark ? '#e8e8e4' : '#1a1a2e',
-              transition: 'all 0.2s'
-            }}>
+
+            {/* Dark / Light toggle button */}
+            <button
+              onClick={toggleDark}
+              className="theme-toggle"
+              title={dark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+              style={{
+                width: 36, height: 36, borderRadius: 9,
+                border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
+                background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
+                color: dark ? 'rgba(232,232,228,0.7)' : 'rgba(26,26,46,0.5)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
               {dark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
           </div>
@@ -344,25 +367,25 @@ export default function Portfolio() {
                   View My Work <ArrowUpRight size={15} />
                 </a>
 
-               {d.resumeUrl && (
-  <a 
-    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment:false/')}
-    target="_blank" 
-    rel="noreferrer" 
-    style={{
-      display: 'inline-flex', alignItems: 'center', gap: 8,
-      padding: '12px 24px', borderRadius: 10,
-      border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
-      background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-      color: dark ? '#e8e8e4' : '#1a1a2e', textDecoration: 'none',
-      fontSize: 14, fontWeight: 500, transition: 'all 0.2s'
-    }}
-    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
-    onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
-  >
-    <FileText size={14} /> Resume
-  </a>
-)}
+                {d.resumeUrl && (
+                  <a
+                    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment:false/')}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '12px 24px', borderRadius: 10,
+                      border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
+                      background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                      color: dark ? '#e8e8e4' : '#1a1a2e', textDecoration: 'none',
+                      fontSize: 14, fontWeight: 500, transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
+                  >
+                    <FileText size={14} /> Resume
+                  </a>
+                )}
               </div>
 
               {/* Socials */}
@@ -412,7 +435,6 @@ export default function Portfolio() {
                 }}>
                   <img src={d.profileImage} alt={d.fullName}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  {/* Indigo overlay strip */}
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0,
                     height: 4, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)'
@@ -469,9 +491,9 @@ export default function Portfolio() {
                 {/* Stats row */}
                 <div style={{ display: 'flex', gap: '2.5rem', flexWrap: 'wrap' }}>
                   {[
-                    { label: 'Skills', value: d.skills?.filter(Boolean).length || 0 },
-                    { label: 'Projects', value: d.projects?.filter(p=>p.name).length || 0 },
-                    { label: 'Roles', value: d.experience?.filter(e=>e.company).length || 0 },
+                    { label: 'Skills',        value: d.skills?.filter(Boolean).length || 0 },
+                    { label: 'Projects',      value: d.projects?.filter(p=>p.name).length || 0 },
+                    { label: 'Roles',         value: d.experience?.filter(e=>e.company).length || 0 },
                     { label: 'Profile views', value: profile.viewCount || 0 },
                   ].map(({ label, value }) => (
                     <div key={label}>
@@ -745,7 +767,7 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* Footer/Contact */}
+        {/* Footer / Contact */}
         <section id="contact" style={{
           padding: '140px 2rem 80px',
           borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
@@ -847,71 +869,58 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* Owner controls */}
         {isOwner && (
-        <div style={{
-          position: 'fixed',
-          top: '80px',
-          right: '24px',
-          display: 'flex',
-          gap: '10px',
-          zIndex: 200
-        }}>
-    
-          {/* Update Button */}
-          <button
-            onClick={() => window.location.href = `/edit/${username}`}
-            style={{
-              padding: '8px 14px',
-              borderRadius: 8,
-              border: '1px solid #6366f1',
-              background: dark ? 'rgba(99,102,241,0.1)' : '#fff',
-              color: '#6366f1',
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)'
-            }}
-          >
-            Update
-          </button>
+          <div style={{
+            position: 'fixed',
+            top: '80px',
+            right: '24px',
+            display: 'flex',
+            gap: '10px',
+            zIndex: 200
+          }}>
+            <button
+              onClick={() => window.location.href = `/edit/${username}`}
+              style={{
+                padding: '8px 14px', borderRadius: 8,
+                border: '1px solid #6366f1',
+                background: dark ? 'rgba(99,102,241,0.1)' : '#fff',
+                color: '#6366f1', fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', backdropFilter: 'blur(8px)'
+              }}
+            >
+              Update
+            </button>
 
-          {/* Delete Button */}
-          <button
-           onClick={handleDelete}
-            style={{
-              padding: '8px 14px',
-              borderRadius: 8,
-              border: '1px solid #ef4444',
-              background: dark ? 'rgba(239,68,68,0.1)' : '#fff',
-              color: '#ef4444',
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)'
-            }}
-         >
-            Delete
-          </button>
-          {/* Back to Website Button */}
-      <button
-        onClick={() => window.location.href = '/login'}
-        style={{
-          padding: '8px 14px',
-          borderRadius: 8,
-          border: '1px solid #9ca3af',
-          background: dark ? 'rgba(255,255,255,0.05)' : '#fff',
-          color: dark ? '#e5e7eb' : '#374151',
-          fontSize: 12,
-          fontWeight: 600,
-          cursor: 'pointer',
-          backdropFilter: 'blur(8px)'
-        }}
-      >
-        ← Back to Login
-      </button>
+            <button
+              onClick={handleDelete}
+              style={{
+                padding: '8px 14px', borderRadius: 8,
+                border: '1px solid #ef4444',
+                background: dark ? 'rgba(239,68,68,0.1)' : '#fff',
+                color: '#ef4444', fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', backdropFilter: 'blur(8px)'
+              }}
+            >
+              Delete
+            </button>
 
-  </div>
-)}
+            <button
+              onClick={() => window.location.href = '/login'}
+              style={{
+                padding: '8px 14px', borderRadius: 8,
+                border: '1px solid #9ca3af',
+                background: dark ? 'rgba(255,255,255,0.05)' : '#fff',
+                color: dark ? '#e5e7eb' : '#374151',
+                fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', backdropFilter: 'blur(8px)'
+              }}
+            >
+              ← Back to Login
+            </button>
+          </div>
+        )}
+
       </div>
     </>
   );
