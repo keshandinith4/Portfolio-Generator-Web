@@ -362,26 +362,40 @@ export default function Portfolio() {
                   View My Work <ArrowUpRight size={15} />
                 </a>
 
-                {/* ✅ Fixed resume download URL */}
+                {/* resume download URL */}
                 {d.resumeUrl && (
-                  <a
-                    href={getResumeDownloadUrl(d.resumeUrl)}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 8,
-                      padding: '12px 24px', borderRadius: 10,
-                      border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
-                      background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-                      color: dark ? '#e8e8e4' : '#1a1a2e', textDecoration: 'none',
-                      fontSize: 14, fontWeight: 500, transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
-                  >
-                    <FileText size={14} /> Resume
-                  </a>
-                )}
+                   <button
+                     onClick={async () => {
+                       try {
+                          const response = await fetch(d.resumeUrl);
+                          const blob = await response.blob();
+                          const blobUrl = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = blobUrl;
+                          link.download = `${d.fullName || username}_resume.pdf`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(blobUrl);
+                        } catch (err) {
+                          window.open(d.resumeUrl, '_blank');
+                        }
+                     }}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 8,
+                        padding: '12px 24px', borderRadius: 10,
+                        border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
+                        background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                        color: dark ? '#e8e8e4' : '#1a1a2e',
+                        fontSize: 14, fontWeight: 500, transition: 'all 0.2s',
+                       cursor: 'pointer'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}
+                    >
+                      <FileText size={14} /> Resume
+                    </button>
+                  )}
               </div>
 
               {/* Socials */}
