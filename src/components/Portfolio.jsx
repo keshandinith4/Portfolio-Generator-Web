@@ -244,7 +244,17 @@ export default function Portfolio() {
                 {label}
               </a>
             ))}
-            
+            {/* Dark mode toggle */}
+            <button onClick={() => setDark(d => !d)} style={{
+              width: 36, height: 36,
+              borderRadius: 8, border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
+              background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: dark ? '#e8e8e4' : '#1a1a2e',
+              transition: 'all 0.2s'
+            }}>
+              {dark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
           </div>
         </nav>
 
