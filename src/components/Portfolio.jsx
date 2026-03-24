@@ -130,11 +130,11 @@ export default function Portfolio() {
     const confirmDelete = window.confirm("Are you sure you want to delete this portfolio?");
     if (!confirmDelete) return;
     try {
-        const token = localStorage.getItem('token'); // ← get the token
+        const token = localStorage.getItem('token'); // get the token
 
         await axios.delete(`${API_URL}/portfolio/${username}`, {
             headers: {
-                Authorization: `Bearer ${token}`, // ← attach it
+                Authorization: `Bearer ${token}`, // attach it
             },
         });
         toast.success("Portfolio deleted");
@@ -357,7 +357,7 @@ export default function Portfolio() {
 
                 {d.resumeUrl && (
                   <a
-                    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment:false/')}
+                    href={d.resumeUrl.replace('/image/upload/', '/image/upload/fl_attachment/')}
                     target="_blank"
                     rel="noreferrer"
                     style={{
