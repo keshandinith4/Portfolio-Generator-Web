@@ -35,8 +35,11 @@ export default function Footer() {
                         Create Your Portfolio
                 </button>
           
-                <button className="bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/40 transition-all transition duration-700 active:scale-95 text-lg">
-                    Learn More
+                <button
+                    onClick={() => { document.getElementById("About_Us")?.scrollIntoView({ behavior: "smooth" }); }}
+                    className="bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/40 transition-all duration-700 active:scale-95 text-lg"
+                >
+                  Learn More
                 </button>
             </div>
 

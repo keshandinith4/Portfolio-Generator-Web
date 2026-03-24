@@ -91,12 +91,6 @@ export default function HeroSection() {
                 <SquarePen size={16} strokeWidth={3} />
                   Create Portfolio Free
               </button>
-
-              <button 
-                className="flex items-center gap-2 border-2 border-gray-300 hover:border-indigo-500 text-gray-700 hover:text-indigo-600 font-semibold px-6 py-3 rounded-xl transition-all duration-200 bg-white/60 backdrop-blur-sm">
-                <Eye size={16} />
-                  View Examples
-              </button>
           </div>
         </div>
 
